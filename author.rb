@@ -8,12 +8,6 @@ class Author
     @biography = biography
   end
 
-  #	def to_h
-  #			'name'=> @name,
-  #			'biography'=> @biography
-  #     	}
-  # 	end
-
   def self.json_create(o)
     new(*o['data'])
   end
