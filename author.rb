@@ -8,10 +8,6 @@ class Author
     @biography = biography
   end
 
-  def self.json_create(o)
-    new(*o['data'])
-  end
-
   def to_json(*a)
     { name: name, biography: biography }.to_json(*a)
   end
