@@ -20,30 +20,21 @@ class Library
     raise ArgumentError if @authors[name]
     # doesn't copy the author's names
     @authors[name] = Author.new(name, biography)
-  rescue ArgumentError
-    puts "Author '#{name}' already exist"
   end
 
   def add_book(title, author_name)
     raise ArgumentError unless @authors[author_name]
     @books[title] = Book.new(title, author_name)
-  rescue ArgumentError
-    puts "Author #{author_name} doesn't exist"
   end
 
   def add_reader(name, email, city, street, house)
     raise ArgumentError if @readers[name]
     @readers[name] = Reader.new(name, email, city, street, house)
-  rescue ArgumentError
-    puts "Reader '#{name}' already exist"
   end
 
   def add_order(book_name, reader_name, date = Time.now)
     raise ArgumentError if !@readers[reader_name] && !@books[book_name]
     @orders << Order.new(book_name, reader_name, date)
-  rescue ArgumentError
-    puts "Something wrong with reader: '#{reader_name}'
-          or with book:'#{book_name}'"
   end
 
   def inverse(hash)
