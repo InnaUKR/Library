@@ -11,8 +11,4 @@ class Book
   def to_json(*a)
     { title: title, author: author }.to_json(*a)
   end
-
-  def to_s
-    "title: #{title}, author: #{author}"
-  end
 end
