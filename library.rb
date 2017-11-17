@@ -16,44 +16,29 @@ class Library
     @authors = authors
   end
 
-  def add_author(name, biography)
-    raise ArgumentError if @authors[name]
-    @authors[name] = Author.new(name, biography)
+  def add_author(author)
+    raise ArgumentError, "Author with name - #{author.name} already exists" if @authors[author.name]
+    @authors[author.name] = author
   end
 
-  def add_book(title, author_name)
-    raise ArgumentError unless @authors[author_name]
-    @books[title] = Book.new(title, author_name)
+  def add_book(book)
+    raise ArgumentError, "Author with name - #{book.author} does not exist" unless @authors[book.author]
+    @books[book.title] = book
   end
 
-  def add_reader(name, email, city, street, house)
-    raise ArgumentError if @readers[name]
-    @readers[name] = Reader.new(name, email, city, street, house)
+  def add_reader(reader)
+    raise ArgumentError, "Reader with name #{reader.name} already exists" if @readers[reader.name]
+    @readers[reader.name] = reader
   end
 
-  def add_order(book_name, reader_name, date = Time.now)
-    raise ArgumentError if !@readers[reader_name] && !@books[book_name]
-    @orders << Order.new(book_name, reader_name, date)
-  end
-
-  # return hash {key~book_title: value ~ amount of this book in orders}
-  def hesh_of_counted_book
-    @orders.each_with_object(Hash.new(0)) do |order, counts|
-      counts[order.book] += 1
-    end
-  end
-
-  def find_greatest(hash_something_amount)
-    sorted_array = hash_something_amount.sort_by(&:last).reverse
-    greatest = []
-    sorted_array.take_while { |x| sorted_array[0][1] == x[1] }.each do |x|
-      greatest << x[0]
-    end
-    greatest
+  def add_order(order)
+    raise ArgumentError, "Reader with name - #{order.reader} does not exist" unless @readers[order.reader]
+    raise ArgumentError, "Book with title - #{order.book} does not exist" unless @books[order.book]
+    @orders << order
   end
 
   def find_most_popular_book
-    hash_book_amount = hesh_of_counted_book
+    hash_book_amount = get_hash_of_counted_book
     find_greatest(hash_book_amount)
   end
 
@@ -65,7 +50,7 @@ class Library
   end
 
   def count_readers_of_most_popular_book
-    hash_book_number = hesh_of_counted_book
+    hash_book_number = get_hash_of_counted_book
     sorted_array = hash_book_number.sort_by(&:last).reverse
     sorted_array[0..2].inject(0) { |sum, arr_book_amount| sum + arr_book_amount[1] }
   end
@@ -83,6 +68,23 @@ class Library
     puts 'File not found'
   end
 
+  private
+
+  def get_hash_of_counted_book
+    @orders.each_with_object(Hash.new(0)) do |order, counts|
+      counts[order.book] += 1
+    end
+  end
+
+  def find_greatest(hash_something_amount)
+    sorted_array = hash_something_amount.sort_by(&:last).reverse
+    greatest = []
+    sorted_array.take_while { |x| sorted_array[0][1] == x[1] }.each do |x|
+      greatest << x[0]
+    end
+    greatest
+  end
+
   def to_json
     {
       'authors' => @authors,
@@ -94,29 +96,29 @@ class Library
 
   def authors_from_json(data_hash)
     data_hash['authors']&.each_value do |author|
-      add_author(author['name'], author['biography'])
+      add_author(Author.new(author['name'], author['biography']))
     end
   end
 
   def books_from_json(data_hash)
     data_hash['books']&.each_value do |book|
-      add_book(book['title'], book['author'])
+      add_book(Book.new(book['title'], book['author']))
     end
   end
 
   def readers_from_json(data_hash)
     data_hash['readers']&.each_value do |reader|
-      add_reader(reader['name'],
-                 reader['email'],
-                 reader['city'],
-                 reader['street'],
-                 reader['house'])
+      add_reader(Reader.new(reader['name'],
+                            reader['email'],
+                            reader['city'],
+                            reader['street'],
+                            reader['house']))
     end
   end
 
   def orders_from_json(data_hash)
     data_hash['orders']&.each do |reader|
-      add_order(reader['book'], reader['reader'], reader['date'])
+      add_order(Order.new(reader['book'], reader['reader'], reader['date']))
     end
   end
 

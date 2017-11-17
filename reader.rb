@@ -10,12 +10,4 @@ class Reader
     @street = street
     @house = house
   end
-
-  def to_json(*a)
-    { name: name,
-      email: email,
-      city: city,
-      street: street,
-      house: house }.to_json(*a)
-  end
 end

@@ -7,8 +7,4 @@ class Author
     @name = name
     @biography = biography
   end
-
-  def to_json(*a)
-    { name: name, biography: biography }.to_json(*a)
-  end
 end
