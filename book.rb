@@ -7,8 +7,4 @@ class Book
     @title = title
     @author = author
   end
-
-  def to_json(*a)
-    { title: title, author: author }.to_json(*a)
-  end
 end

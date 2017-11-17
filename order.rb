@@ -8,8 +8,4 @@ class Order
     @reader = reader
     @date = date
   end
-
-  def to_json(*a)
-    { book: book, reader: reader, date: date }.to_json(*a)
-  end
 end
